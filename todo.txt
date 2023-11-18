@@ -1,0 +1,13 @@
+- bag fájl beolvasás github kód alapján
+- 3d pose 
+- ros node publikálja ezt az információt
+
+- főoldalon az ábra
+- subtask logic -> grasp.cpp megnézése
+    - peg transvert is
+
+    - pythonosítás vagy c++ ???
+
+- ros node action clientek
+
+- (orientáció) (blockdetector)

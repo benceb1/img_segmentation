@@ -3,7 +3,6 @@ import numpy as np
 import time
 import random as rng
 import pyrealsense2 as rs
-from cv_bridge import CvBridge
 import matplotlib as plt
 
 sleep_time = 1/30
@@ -13,8 +12,8 @@ color = (66, 236, 245)
 # Init RealSense
 width = 640
 height = 480
-fps = 30
-exposure = 600.0
+fps = 15
+exposure = 250.0
 clipping_distance_in_meters = 0.30
 
 context = rs.context()
@@ -24,17 +23,15 @@ config = rs.config()
 config.enable_stream(rs.stream.depth, width, height, rs.format.z16, fps)
 config.enable_stream(rs.stream.color, width, height, rs.format.bgr8, fps)
 
-bridge = CvBridge()
+# plt.ion()
+# fig = plt.figure()
+# ax = fig.add_subplot(projection='3d')
 
-plt.ion()
-fig = plt.figure()
-ax = fig.add_subplot(projection='3d')
+# ax.set_xlabel('X')
+# ax.set_ylabel('Y')
+# ax.set_zlabel('Z')
 
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
-ax.set_zlabel('Z')
-
-def get_segmented_image(img, aligned_depth_frame):
+def get_segmented_image(img,aligned_depth_frame):
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
     _, dst = cv.threshold(gray, 100, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU)
@@ -91,9 +88,6 @@ def process_stream():
             # Get frameset of color and depth
             frames = pipeline.wait_for_frames()
 
-            # Get frameset of color and depth
-            frames = pipeline.wait_for_frames()
-
             # Align the depth frame to color frame
             aligned_frames = align.process(frames)
 
@@ -109,8 +103,9 @@ def process_stream():
             #depth_image = np.asanyarray(aligned_depth_frame.get_data())
             color_image = np.asanyarray(color_frame.get_data())
             
+            segmented_img = get_segmented_image(color_image, aligned_depth_frame)
 
-            cv.imshow('frame', color_image)
+            cv.imshow('frame', segmented_img)
 
             if cv.waitKey(1) & 0xFF == ord('q'):
                 break
